@@ -47,8 +47,6 @@ Kubernetes has a **master-worker** architecture, consisting of the following cor
 
 > 💡 **Cluster** = Control Plane + Multiple Worker Nodes
 
-![Kubernetes Architecture](https://d33wubrfki0l68.cloudfront.net/64f72fd0cb204d0008708ae4/screenshot_2023-09-05-13-26-23-0000.png)
-
 ---
 
 ## 4️⃣ How Kubernetes Works
