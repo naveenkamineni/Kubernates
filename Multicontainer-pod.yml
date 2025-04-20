@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multicontainer-pod
+  labels:
+    app: multicontainer
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+
+    - name: ubuntu
+      image: ubuntu:latest
+      command: [ "sleep", "3600" ]
+      # This keeps the Ubuntu container running (otherwise it'll exit immediately)
+
+    - name: mysql
+      image: mysql:5.7
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: rootpassword
+        - name: MYSQL_DATABASE
+          value: testdb
+      ports:
+        - containerPort: 3306
