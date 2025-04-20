@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: annotated-pod
+  labels:
+    app: demo
+  annotations:
+    description: "This is a demo pod with annotations"
+    owner: "dev-team"
+    purpose: "example-for-annotations"
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
