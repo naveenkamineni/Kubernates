@@ -183,7 +183,13 @@ kubectl get pods
 This guide explains how to install a **Kubernetes cluster** on Amazon EC2 using **kubeadm** with **Docker as container runtime** (`cri-dockerd`).
 It covers **Master Node setup**, **Worker Node joining**, and **reset steps**.
 
-## Example Architecture Diagram (ASCII Style)
+
+
+## 🔹 Example Architecture Diagram (ASCII Style)
+
+
+
+```
              ┌───────────────────────────┐
              │   Control Plane (Master)   │
              │ ───────────────────────── │
@@ -203,8 +209,7 @@ It covers **Master Node setup**, **Worker Node joining**, and **reset steps**.
 │  • kube-proxy   │                        │  • kube-proxy        │
 │  • Pods         │                        │  • Pods              │
 └─────────────────┘                        └──────────────────────┘
-
-
+```
 ---
 
 ## 📑 Table of Contents
@@ -373,6 +378,24 @@ sudo kubeadm reset
 ✨ That’s it! Your Kubernetes cluster is ready 🎉
 
 ---
+
+### 🔹 Example Screenshot Sections
+
+````markdown
+### ✅ Verify Cluster
+```bash
+kubectl get nodes -o wide
+````
+
+**Output:**
+
+```
+NAME                                         STATUS   ROLES           AGE   VERSION
+ip-10-0-1-186.ap-south-1.compute.internal    Ready    control-plane   10m   v1.29.15
+ip-10-0-1-167.ap-south-1.compute.internal    Ready    <none>          5m    v1.29.15
+```
+
+```
 
 Let me know if you want this formatted for a GitHub README (with badges or markdown enhancements), or if you want to add a section for Windows/macOS too.
 
