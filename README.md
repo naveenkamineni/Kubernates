@@ -361,6 +361,11 @@ sudo systemctl enable kubelet
 
 > ⚠️ Replace `<CONTROL-PLANE-IP>`, `<TOKEN>`, and `<HASH>` with the values from your `kubeadm init` output.
 
+## On the master (control plane) node, you can always generate the worker node join command with this:
+
+```bash
+kubeadm token create --print-join-command
+```
 ```bash
 sudo kubeadm join 172.31.39.190:6443 --token b6ujsf.7bod2eanho1mc0rj --discovery-token-ca-cert-hash sha256:0bafe7570e932da737eadaf75e1d323a676f22d7482b37ad1a200f04e86b4a67 --cri-socket unix:///var/run/cri-dockerd.sock
 ```
@@ -393,8 +398,6 @@ kubectl get nodes -o wide
 NAME                                         STATUS   ROLES           AGE   VERSION
 ip-10-0-1-186.ap-south-1.compute.internal    Ready    control-plane   10m   v1.29.15
 ip-10-0-1-167.ap-south-1.compute.internal    Ready    <none>          5m    v1.29.15
-```
-
 ```
 
 Let me know if you want this formatted for a GitHub README (with badges or markdown enhancements), or if you want to add a section for Windows/macOS too.
