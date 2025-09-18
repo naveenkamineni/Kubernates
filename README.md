@@ -366,9 +366,9 @@ sudo systemctl enable kubelet
 ```bash
 kubeadm token create --print-join-command
 ```
-```bash
+# Note: use this command at the end of join join command("-cri-socket unix:///var/run/cri-dockerd.sock") to run docker as container run. By default K8 use containerd as conatiner run time from v1.24.
+### Below join token is used to join worker node to master after running all above commands( you join N no of worker node to master like this using join token)
 sudo kubeadm join 172.31.39.190:6443 --token b6ujsf.7bod2eanho1mc0rj --discovery-token-ca-cert-hash sha256:0bafe7570e932da737eadaf75e1d323a676f22d7482b37ad1a200f04e86b4a67 --cri-socket unix:///var/run/cri-dockerd.sock
-```
 
 ---
 
