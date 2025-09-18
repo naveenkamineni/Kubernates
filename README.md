@@ -176,6 +176,182 @@ kubectl get pods
 
 ---
 
+---
+
+# 🚀 Kubernetes Installation on EC2 (Real-Time Guide)
+
+This guide explains how to install a **Kubernetes cluster** on Amazon EC2 using **kubeadm** with **Docker as container runtime** (`cri-dockerd`).
+It covers **Master Node setup**, **Worker Node joining**, and **reset steps**.
+
+---
+
+## 📑 Table of Contents
+
+* [🔧 Master Node Installation](#-master-node-installation)
+
+  * [Step 1: Update and disable swap](#step-1-update-and-disable-swap)
+  * [Step 2: Install Docker](#step-2-install-docker)
+  * [Step 3: Add Kubernetes repository](#step-3-add-kubernetes-repository)
+  * [Step 4: Install Kubernetes components](#step-4-install-kubernetes-components)
+  * [Step 5: Initialize Kubernetes (Master)](#step-5-initialize-kubernetes-master)
+  * [Step 6: Configure kubectl](#step-6-configure-kubectl)
+  * [Step 7: Grant ec2-user kube access](#step-7-grant-ec2-user-kube-access)
+  * [Step 8: Install Flannel CNI](#step-8-install-flannel-cni-pod-network)
+  * [Step 9: Verify nodes](#step-9-verify-nodes)
+* [🖥 Worker Node Installation](#-worker-node-installation)
+
+  * [Step 1: Update and disable swap](#step-1-update-and-disable-swap-1)
+  * [Step 2: Install Docker](#step-2-install-docker-1)
+  * [Step 3: Add Kubernetes repository](#step-3-add-kubernetes-repository-1)
+  * [Step 4: Install Kubernetes components](#step-4-install-kubernetes-components-1)
+  * [Step 5: Join Worker Node to Master](#step-5-join-worker-node-to-master)
+* [🔄 Reset Master Node (if needed)](#-reset-master-node-if-needed)
+
+---
+
+## 🔧 Master Node Installation
+
+### Step 1: Update and disable swap
+
+```bash
+sudo yum update -y
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+```
+
+### Step 2: Install Docker
+
+```bash
+sudo yum install -y docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker ec2-user
+```
+
+### Step 3: Add Kubernetes repository
+
+```bash
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+EOF
+```
+
+✅ Verify repository:
+
+```bash
+cat /etc/yum.repos.d/kubernetes.repo
+```
+
+### Step 4: Install Kubernetes components
+
+```bash
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo systemctl enable kubelet
+```
+
+### Step 5: Initialize Kubernetes (Master)
+
+👉 For Docker runtime:
+
+```bash
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/cri-dockerd.sock
+```
+
+### Step 6: Configure kubectl
+
+```bash
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+```
+
+### Step 7: Grant ec2-user kube access
+
+```bash
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+### Step 8: Install Flannel CNI (Pod Network)
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+
+### Step 9: Verify nodes
+
+```bash
+kubectl get nodes
+```
+
+---
+
+## 🖥 Worker Node Installation
+
+### Step 1: Update and disable swap
+
+```bash
+sudo yum update -y
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+```
+
+### Step 2: Install Docker
+
+```bash
+sudo yum install docker -y
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker ec2-user
+```
+
+### Step 3: Add Kubernetes repository
+
+```bash
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+EOF
+```
+
+### Step 4: Install Kubernetes components
+
+```bash
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo systemctl enable kubelet
+```
+
+### Step 5: Join Worker Node to Master
+
+> ⚠️ Replace `<CONTROL-PLANE-IP>`, `<TOKEN>`, and `<HASH>` with the values from your `kubeadm init` output.
+
+```bash
+sudo kubeadm join 172.31.39.190:6443 --token b6ujsf.7bod2eanho1mc0rj --discovery-token-ca-cert-hash sha256:0bafe7570e932da737eadaf75e1d323a676f22d7482b37ad1a200f04e86b4a67 --cri-socket unix:///var/run/cri-dockerd.sock
+```
+
+---
+
+## 🔄 Reset Master Node (if needed)
+
+```bash
+sudo kubeadm reset
+```
+
+---
+
+✨ That’s it! Your Kubernetes cluster is ready 🎉
+
+---
+
 Let me know if you want this formatted for a GitHub README (with badges or markdown enhancements), or if you want to add a section for Windows/macOS too.
 
 ## 📚 Want to Learn More?
